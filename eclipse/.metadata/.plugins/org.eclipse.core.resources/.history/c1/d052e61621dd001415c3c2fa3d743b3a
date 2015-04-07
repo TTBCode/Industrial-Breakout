@@ -1,0 +1,43 @@
+package IndustrialBreakout.TileEntity.bases;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
+
+import org.apache.logging.log4j.Level;
+
+import IndustrialBreakout.Main;
+import IndustrialBreakout.TileEntity.TileEntityBatBox;
+import IndustrialBreakout.TileEntity.TileEntityCompressor;
+import IndustrialBreakout.TileEntity.TileEntityGrinder;
+import IndustrialBreakout.TileEntity.TileEntityHeater;
+import IndustrialBreakout.TileEntity.TileEntityRefinery;
+import IndustrialBreakout.TileEntity.TileEntityRelay;
+import IndustrialBreakout.reference.Reference;
+
+public class TileEntityGenerator extends TileEntityMachine{
+	
+	public int range = 4;
+	
+	public boolean hasLoaded = false;
+	
+	public List<TileEntityBatBox> batboxes = new ArrayList<TileEntityBatBox>();
+	public List<TileEntityHeater> heaters = new ArrayList<TileEntityHeater>();
+	public List<TileEntityCompressor> compressors = new ArrayList<TileEntityCompressor>();
+	public List<TileEntityGrinder> grinders = new ArrayList<TileEntityGrinder>();
+	public List<TileEntityRefinery> refineries = new ArrayList<TileEntityRefinery>();
+	public List<TileEntityRelay> relays = new ArrayList<TileEntityRelay>();
+	
+	public void updateLists(int x, int y, int z){
+		batboxes = Reference.nearestBatBoxs(range, worldObj, x, y, z);
+		heaters = Reference.nearestHeaters(range, worldObj, x, y, z);
+		compressors = Reference.nearestCompressors(range, worldObj, x, y, z);
+		grinders = Reference.nearestGrinders(range, worldObj, x, y, z);
+		refineries = Reference.nearestRefineries(range, worldObj, x, y, z);
+		relays = Reference.nearestRelays(range, worldObj, x, y, z);
+	}
+}

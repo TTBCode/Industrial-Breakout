@@ -1,0 +1,112 @@
+package IndustrialBreakout.Machines;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockContainer;
+import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.IIcon;
+import net.minecraft.util.MathHelper;
+import net.minecraft.world.World;
+import IndustrialBreakout.Main;
+import IndustrialBreakout.TileEntity.TileEntityBatBox;
+import IndustrialBreakout.reference.Reference;
+
+public class BlockIBMachineBatBox extends BlockContainer{
+
+	private int picid;
+	private IIcon[] textures;
+	
+	
+	public BlockIBMachineBatBox(int picid) {
+		super(Material.iron);
+		this.picid = picid;
+	}
+	
+	/**
+     * Called whenever the block is added into the world. Args: world, x, y, z
+     */
+    public void onBlockAdded(World par1World, int par2, int par3, int par4)
+    {
+        super.onBlockAdded(par1World, par2, par3, par4);
+        this.setDefaultDirection(par1World, par2, par3, par4);
+    }
+
+    private void setDefaultDirection(World world, int x, int y, int z)
+    {
+        if (!world.isRemote)
+        {
+            Block block = world.getBlock(x, y, z - 1);
+            Block block1 = world.getBlock(x, y, z + 1);
+            Block block2 = world.getBlock(x - 1, y, z);
+            Block block3 = world.getBlock(x + 1, y, z);
+            byte b0 = 3;
+
+            if (block.func_149730_j() && !block1.func_149730_j()) b0 = 3;
+            if (block1.func_149730_j() && !block.func_149730_j()) b0 = 2;
+            if (block2.func_149730_j() && !block3.func_149730_j()) b0 = 5;
+            if (block3.func_149730_j() && !block2.func_149730_j()) b0 = 4;
+
+            world.setBlockMetadataWithNotify(x, y, z, b0, 2);
+        }
+    }
+
+    /**
+     * Called when the block is placed in the world.
+     */
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase living, ItemStack itemStack)
+    {
+        int l = MathHelper.floor_double((double)(living.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
+        byte b0 = 3;
+        
+        if (l == 0) b0 = 2;
+        if (l == 1) b0 = 5;
+        if (l == 2) b0 = 3;
+        if (l == 3) b0 = 4;
+        
+        world.setBlockMetadataWithNotify(x, y, z, b0, 2);
+    }
+
+	@Override
+	public TileEntity createNewTileEntity(World world, int i) {
+		return new TileEntityBatBox();
+	}
+	
+	@Override
+	public void registerBlockIcons(IIconRegister ir){
+		textures = new IIcon[5];
+		
+		for(int i=0;i<textures.length;i++){
+			textures[i] = ir.registerIcon(Reference.MOD_ID+":batBox"+i);
+		}
+	}
+	
+	@Override
+	public IIcon getIcon(int side, int meta){
+		if(side == 0 || side == 1) return textures[side];
+		else if(meta == 0 ? side == 3 : side == meta) return textures[3];
+		else if(meta == 0 ? side == 2 : ) return textures[2];
+		else return textures[4];
+	}
+
+    /**
+     * Called upon block activation (right click on the block.)
+     */
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int par6, float par7, float par8, float par9)
+    {
+        if (world.isRemote)
+        {
+            return true;
+        }
+        else
+        {
+            player.openGui(Main.instance, 5, world, x, y, z);
+            
+        }
+        return true;
+    }
+
+}
